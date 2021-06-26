@@ -5,12 +5,12 @@ import {
   Route,
 } from "react-router-dom";
 import { Navbar } from './components'
-import { ListUsers, Register, UserDetail } from "./pages";
-
+import { ListUsers, Register } from "./pages";
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 
 export default function App() {
+
   return (
     <Router>
       <Container maxWidth='lg'>
@@ -22,9 +22,6 @@ export default function App() {
             </Route>
             <Route exact path="/users">
               <ListUsers />
-            </Route>
-            <Route exact path="/detail">
-              <UserDetail />
             </Route>
           </Switch>
         </Box>
