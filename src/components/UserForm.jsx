@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Button from '@material-ui/core/Button';
@@ -13,6 +13,7 @@ import {
 } from '@material-ui/pickers';
 import { AddAb } from '.'
 import Swal from 'sweetalert2'
+import axios from 'axios'
 
 const validationSchema = yup.object({
     name: yup
@@ -36,7 +37,7 @@ const validationSchema = yup.object({
         .test('len', 'Must be less than 50 chars', val => val?.length < 50)
 });
 
-const WithMaterialUI = () => {
+const UserForm = () => {
 
     const [selectedDate, setSelectedDate] = useState()
     const [abs, setAbs] = useState([])
@@ -54,7 +55,7 @@ const WithMaterialUI = () => {
             address: '',
         },
         validationSchema: validationSchema,
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
             // Validate abilities and date 
             var twelve = new Date();
             twelve.setFullYear(twelve.getFullYear() - 12);
@@ -75,7 +76,48 @@ const WithMaterialUI = () => {
                     text: errorMessage,
                 })
             else {
-                // Register field
+                // const born = new Date(selectedDate)
+                // let day = born.getDate().toString()
+                // let month = born.getMonth().toString()
+
+                // if (day.length < 2)
+                //     day = `0${day}`
+                // if (month.length < 2)
+                //     month = `0${month}`
+                // const formatDate = `${day}/${month}/${born.getFullYear()}`
+
+                const body = {
+                    ...values,
+                    abilities: abs.reduce((acum, curr) => acum + ',' + curr),
+                    bornDate: selectedDate
+                }
+                console.log(body)
+
+                try {
+                    const response = await axios.post('https://backusersjs.herokuapp.com/users', body)
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Ok',
+                        text: 'User Added to database',
+                    })
+
+                } catch (error) {
+                    if (error?.response?.data?.errors)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: error?.response?.data?.errors[0].msg,
+                        })
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: "Server Error",
+                        })
+                    }
+                }
+
+
             }
 
         },
@@ -134,7 +176,7 @@ const WithMaterialUI = () => {
                                 fullWidth
                                 id="date-picker-dialog"
                                 label="Born Date"
-                                format="dd/mm/yyyy"
+                                format="dd/MM/yyyy"
                                 value={selectedDate}
                                 required
                                 onChange={handleDateChange}
@@ -162,7 +204,7 @@ const WithMaterialUI = () => {
                     </Grid>
                     <Grid item xs={12} sm={12} md={6}>
                         <Box className='abs'>
-                            <h6>Abilities: </h6>
+                            <h5>Abilities: </h5>
                             <span>
                                 {
                                     abs.length > 0 ?
@@ -184,4 +226,4 @@ const WithMaterialUI = () => {
 };
 
 
-export default WithMaterialUI;
+export default UserForm;
