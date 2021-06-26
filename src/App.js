@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
+import { Navbar } from './components'
+import { ListUsers, Register, UserDetail } from "./pages";
 
-function App() {
+import Container from '@material-ui/core/Container';
+import Box from '@material-ui/core/Box';
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Container maxWidth='lg'>
+        <Navbar title='User Database' />
+        <Box display='flex' justifyContent='center' flexDirection='column' minHeight='90vh'>
+          <Switch>
+            <Route exact path="/">
+              <Register />
+            </Route>
+            <Route exact path="/users">
+              <ListUsers />
+            </Route>
+            <Route exact path="/detail">
+              <UserDetail />
+            </Route>
+          </Switch>
+        </Box>
+      </Container>
+
+    </Router>
   );
 }
-
-export default App;
